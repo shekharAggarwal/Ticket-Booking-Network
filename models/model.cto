@@ -1,7 +1,6 @@
 namespace org.ticketBooking.network
 
-abstract participant Member identified by mId {
-  o String mId
+abstract participant Member {
   o String firstName
   o String lastName
   o String email
@@ -17,8 +16,8 @@ participant EventHost identified by hId extends Member {
 
 asset EventH identified by eId {
   o String eId
-  o String date
-  o String description
+  o String date 
+  o String description optional
   o String venue
   o EventType eventType
   o Integer numberOfTickets
@@ -37,11 +36,11 @@ asset Ticket identified by tId {
   o String tId
   o String seatId
   o TicketState ticketState
-  o Double faceValue
+  o Double faceValue 
   o Double salePrice
   --> EventH eventH
-  o Member owner
-  o Member lastOwner
+  --> Member owner
+  --> Member lastOwner
 }
 
 enum TicketState{
@@ -59,26 +58,26 @@ enum EventType{
 transaction CreateEvent{
   o String eId
   o String date
-  o String description
+  o String description optional
   o String venue
   o EventType eventType
   o Integer numberOfTickets
-  o Integer faceValue
-  o EventHost host
+  o Double faceValue
+  --> EventHost host
 }
 
 transaction SellTicket {
   o String sellPrice
-  o Member Buyer
-  o Ticket ticket
+  --> Member Buyer
+  --> Ticket ticket
 }
 
 transaction ResellTicket {
   o String salePrice
-  o Member Buyer
-  o TicketList ticketList
+  --> Member Buyer
+  --> TicketList ticketList
 }
 
 transaction UseTicket {
-  o Ticket ticket
+  --> Ticket ticket
 }
