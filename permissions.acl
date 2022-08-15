@@ -11,13 +11,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-rule SystemACL {
- description: "System ACL to permit all access"
- participant: "org.hyperledger.composer.system.Participant"
- operation: ALL
- resource: "org.hyperledger.composer.system.**"
- action: ALLOW
- }
+ /* 
+Rule 1: The Event Host can see all their events.
+● Applicable participant: Event Host
+● Applicable resource: Event */
+
+rule ReadEventH {
+    description: "The Event Host can see all their events."
+    participant(p): "org.ticketBooking.network.EventHost"
+    operation: READ
+    resource(r): "org.ticketBooking.network.EventH"
+    condition: (r.host.getIdentifier() == p.getIdentifier())
+    action: ALLOW
+}
+
+/* Rule 2: The Members can see only the tickets they have purchased.
+● Applicable participant: Members
+● Applicable resource: Tickets */
+
+rule ReadTickets {
+    description: "The Members can see only the tickets they have purchased."
+    participant(p): "org.ticketBooking.network.Member"
+    operation: READ
+    resource(r): "org.ticketBooking.network.Ticket"
+    condition: (r.owner.getIdentifier() == p.getIdentifier())
+    action: ALLOW
+}
+
+/* 
+Rule 3: The Network Admin User has access to all the resources.
+● Applicable participant: Network Admin User
+● Applicable resource: All the participants and assets */
 
 rule NetworkAdminUser {
     description: "Grant business network administrators full access to user resources"
@@ -26,7 +50,10 @@ rule NetworkAdminUser {
     resource: "**"
     action: ALLOW
 }
-
+/* 
+Rule 4: The Network Admin System has access to all the resources.
+● Applicable participant: Network Admin System
+● Applicable resource: All the participants and assets */
 rule NetworkAdminSystem {
     description: "Grant business network administrators full access to system resources"
     participant: "org.hyperledger.composer.system.NetworkAdmin"
@@ -34,40 +61,28 @@ rule NetworkAdminSystem {
     resource: "org.hyperledger.composer.system.**"
     action: ALLOW
 }
-
 /* 
-Rule 1: The Event Host can see all their events.
-● Applicable participant: Event Host
-● Applicable resource: Event */
+Rule 5: The Ticket Listing is available to all.
+● Applicable participant: All
+● Applicable resource: Ticket Listing */
 
-rule ReadEventH {
-    description: "All participants can read their own Event"
-    participant(p): "org.ticketBooking.network.*"
+
+rule ReadTicketListing {
+    description: "The Ticket Listing is available to all"
+    participant: "org.ticketBooking.network.*"
     operation: READ
-    resource(r): "org.ticketBooking.network.EventH"
-    condition: (r.host.getIdentifier() == p.getIdentifier())
+    resource: "org.ticketBooking.network.TicketList"
     action: ALLOW
 }
 
-rule ReadEventHost {
-    description: "All participants can read their own EventHost"
-    participant(p): "org.ticketBooking.network.*"
-    operation: READ
-    resource(r): "org.ticketBooking.network.EventHost"
-    condition: (r.hId.getIdentifier() == p.getIdentifier())
-    action: ALLOW
-}
+/* Rule 6: The Events are available to all.
+● Applicable participant: All
+● Applicable resource: Events */
 
-/* 
-Rule 2: The Members can see only the tickets they have purchased.
-● Applicable participant: Members
-● Applicable resource: Tickets */
-
-rule ReadTicketM {
-    description: "All participants can read their own Tickets"
-    participant(p): "org.ticketBooking.network.*"
+rule ReadEvent {
+    description: "The Events are available to all"
+    participant: "org.ticketBooking.network.*"
     operation: READ
-    resource(r): "org.ticketBooking.network.TicketM"
-    condition: (r.purchaser.getIdentifier() == p.getIdentifier())
+    resource: "org.ticketBooking.network.EventH"
     action: ALLOW
 }

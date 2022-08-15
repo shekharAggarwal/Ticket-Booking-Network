@@ -1,0 +1,19 @@
+query Q1 {
+description: "Select all Members"
+ statement: SELECT org.ticketBooking.network.Member
+}
+
+query Q2 {
+description: "Select all Events"
+ statement: SELECT org.ticketBooking.network.EventH
+}
+
+query Q3 {
+description: "Select all Tickets"
+ statement: SELECT org.ticketBooking.network.Ticket
+}
+
+query Q4 {
+description: "Select all TicketLists"
+ statement: SELECT org.ticketBooking.network.TicketList
+}
